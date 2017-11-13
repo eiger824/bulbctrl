@@ -37,15 +37,21 @@ int main(int argc, char* argv[])
     state = atoi(buffer);
 
     // Parse state and write it
-    if (!strcmp(argv[1], "1") && !state)
+    if (!strcmp(argv[1], "1"))
     {
-        printf("Switching ON!\n");
-        err = write(fd, "1", 1);
+        if (!state)
+        {
+            printf("Switching ON!\n");
+            err = write(fd, "1", 1);
+        }
     }
-    else if (!strcmp(argv[1], "0") && state)
+    else if (!strcmp(argv[1], "0"))
     {
-        printf("Switching OFF!\n");
-        err = write(fd, "0", 1);
+        if (state)
+        {
+            printf("Switching OFF!\n");
+            err = write(fd, "0", 1);
+        }
     }
     else
     {
@@ -53,7 +59,7 @@ int main(int argc, char* argv[])
         close(fd);
         return -1;
     }
-    
+
     if (err < 0)
     {
         perror("Error writing to device");
