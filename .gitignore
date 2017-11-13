@@ -1,0 +1,7 @@
+*.sym*
+*.ko
+*.mod*
+*.o
+*.order
+*.cmd
+togglebulb

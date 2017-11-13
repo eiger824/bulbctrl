@@ -1,0 +1,1 @@
+KERNEL=="bulbctrl", SUBSYSTEM=="bc-drv", MODE="0666"

@@ -1,0 +1,36 @@
+BulbCtrl - A simple linux kernel driver and userspace program to control
+the current flow of a USB-bulb for the Raspberry Pi 3!
+
+This driver sets listens for interrupts on GPIO 23 (or number 16 in physical
+notation), and whenever an interrupt is sensed, i.e. by pressing the button, it
+sets GPIO 24 (or number 18 in physical notation) HIGH, so current flows through
+the bulb.
+
+The circuit schematic could be drawn as following:
+
+                            --------
+--------------------------|         |----------------
+|                         |    X    |               |
+|                           ________                |
+|                                                   |
+|                                                   |
+|                                                   |
+|  _________________________________________________|______________________________
+|  |                                               (x)      (x)
+|  |                                        GPIOs: 23(16)   24(18)
+|__|__(3.3V) (Pin 1)                                                 . . .
+   |_________________________________________________________|_____________________
+                                                             |
+                                 ---------                   |
+                                | USB port|              ____|G____
+                                |_________|             |          |
+                                 |    |                 |          |
+                                 |    |________________S|  BS270   |
+         ________________________|                      |__________|
+        |        ______                                      |D
+        |______-| Bulb |+____________________________________|
+                |______|
+
+
+Pushbutton X is what is going to trigger the interrupt.
+
