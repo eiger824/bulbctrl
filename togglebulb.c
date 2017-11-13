@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    int fd, err;
+    int fd, err, state;
     char buffer[2];
 
     fd = open("/dev/bulbctrl", O_RDWR);
@@ -34,15 +34,17 @@ int main(int argc, char* argv[])
         perror("Error reading");
     }
     buffer[1] = 0;
-    printf("Current bulb state is: %s\n", (!strcmp(buffer,"1")?"ON":"OFF"));
+    state = atoi(buffer);
 
     // Parse state and write it
-    if (!strcmp(argv[1], "1"))
+    if (!strcmp(argv[1], "1") && !state)
     {
+        printf("Switching ON!\n");
         err = write(fd, "1", 1);
     }
-    else if (!strcmp(argv[1], "0"))
+    else if (!strcmp(argv[1], "0") && state)
     {
+        printf("Switching OFF!\n");
         err = write(fd, "0", 1);
     }
     else
