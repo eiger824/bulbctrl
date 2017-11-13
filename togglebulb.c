@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
     }
 
     int fd, err;
+    char buffer[2];
 
     fd = open("/dev/bulbctrl", O_RDWR);
     if (fd < 0)
@@ -26,6 +27,14 @@ int main(int argc, char* argv[])
         perror("Failed to open device");
         return errno;
     }
+
+    // Get current state
+    if ( (err = read(fd, buffer, 1)) < 0)
+    {
+        perror("Error reading");
+    }
+    buffer[1] = 0;
+    printf("Current bulb state is: %s\n", (!strcmp(buffer,"1")?"ON":"OFF"));
 
     // Parse state and write it
     if (!strcmp(argv[1], "1"))

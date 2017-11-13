@@ -23,6 +23,7 @@ static unsigned int press_cnt         =   0;
 static bool         led_state         =   0; 
 static int          major_number;
 static char         message[2]        =   {0};
+static size_t       size_out;
 static struct class*  bcclass   =  NULL;
 static struct device* bcdev    =  NULL;
 
@@ -32,11 +33,13 @@ static irq_handler_t  irq_handler(unsigned int irq, void *dev_id, struct pt_regs
 static int      dev_open(struct inode *in, struct file *f);
 static int      dev_release(struct inode *in, struct file *f);
 static ssize_t  dev_write(struct file *f, const char* msg, size_t nb, loff_t *lf);
+static ssize_t  dev_read(struct file *f, char* msg, size_t nb, loff_t *lf);
 
 static struct file_operations fops = 
 {
     .open = dev_open,
     .write = dev_write,
+    .read = dev_read,
     .release = dev_release,
 };
 
@@ -171,6 +174,27 @@ static ssize_t dev_write(struct file* f, const char* msg, size_t nb, loff_t *lf)
     return nb;
 }
 
+static ssize_t dev_read(struct file *f, char* msg, size_t nb, loff_t *lf)
+{
+   int err;
+   sprintf(message, "%d", (int)led_state); 
+   message[1] = 0;
+   printk(KERN_INFO "BULBCTRL: Requesting bulb state: Returning [%s]\n", message);
+   size_out = 1; // Always
+   err = copy_to_user(msg, message, size_out);
+
+   if (err == 0)
+   {
+       printk(KERN_INFO "BULBCTRL: Sent %zu bytes to user-space\n", size_out);
+       return size_out;
+   }
+   else
+   {
+       printk(KERN_INFO "BULBCTRL: Failed to send %zu bytes to user-space\n", err);
+       return -EFAULT;
+   }
+
+}
 static irq_handler_t irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs)
 {
     led_state = !led_state;
