@@ -125,13 +125,13 @@ int main(int argc, char **argv)
         n = read(childfd, buf, BUFSIZE);
         if (n < 0) 
             error("ERROR reading from socket");
-        printf("server received %d bytes: %s", n, buf);
+        printf("server received %d bytes\n", n);
         buf[n] = '\0';
 
         // Analyze buffer
         if (buf[0] != 0x01)
         {
-            fprintf(stderr, "Wrong client ID: %d\n", (int)buf[0] + 48);
+            fprintf(stderr, "Wrong client ID: %d\n", (int)buf[0]);
         }
         else
         {
@@ -143,11 +143,13 @@ int main(int argc, char **argv)
             {
                 int fd, err;
                 fd = open("/dev/bulbctrl", O_RDWR);
+		printf("fd was: %d\n", fd);
                 char rsp[4];
                 rsp[0] = buf[0];
                 rsp[1] = buf[1];
                 if (buf[2] == 0x1a) //Get
                 {
+			printf("GET request received\n");
                     // Write it to the client
                     if (fd < 0)
                     {
@@ -166,13 +168,15 @@ int main(int argc, char **argv)
                         {
                             current_value[1] = 0; 
                             rsp[2] = current_value[0];
+				printf("Current value turns out to be: %s\n", current_value);
                         }
                     }
                     rsp[3] = '\0';
                     n = write(childfd, rsp, 3);
+			printf("Wrote %zu bytes back to client\n", n);
                     close(fd);
                 }
-                else if (buf[2] == 0xff) //set
+                else if (buf[2] == 0x7f) //set
                 {
                     if (fd < 0)
                     {
@@ -181,7 +185,7 @@ int main(int argc, char **argv)
                     }
                     else
                     {
-                        if (buf[3] != 0x00 && buf[3] != 0xff) 
+                        if (buf[3] != 0x00 && buf[3] != 0x7f) 
                         {
                             fprintf(stderr, "Wrong value to set\n");
                             rsp[2] = 0x7f;
