@@ -27,7 +27,7 @@ static size_t       size_out;
 static struct class*  bcclass   =  NULL;
 static struct device* bcdev    =  NULL;
 
-static irq_handler_t  irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs);
+//static irq_handler_t  irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs);
 
 // File operations
 static int      dev_open(struct inode *in, struct file *f);
@@ -68,6 +68,7 @@ static int __init bulbctrl_init(void)
 
     printk(KERN_INFO "BULBCTRL: The button state is currently: %d\n", gpio_get_value(gpio_button));
 
+/*
     irq_number = gpio_to_irq(gpio_button);
     printk(KERN_INFO "BULBCTRL: The button is mapped to IRQ: %d\n", irq_number);
 
@@ -78,6 +79,7 @@ static int __init bulbctrl_init(void)
             NULL);
 
     printk(KERN_INFO "BULBCTRL: The interrupt request result : %d\n", result);
+*/
 
     // Register character device and class
     major_number = register_chrdev(0, DEVICE_NAME, &fops);
@@ -108,7 +110,7 @@ static int __init bulbctrl_init(void)
     }
 
     // return the result of the interrupt register 
-    return result;
+    return 0;
 }
 
 static void __exit bulbctrl_exit(void)
@@ -195,6 +197,7 @@ static ssize_t dev_read(struct file *f, char* msg, size_t nb, loff_t *lf)
    }
 
 }
+/*
 static irq_handler_t irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs)
 {
     led_state = !led_state;
@@ -203,6 +206,7 @@ static irq_handler_t irq_handler(unsigned int irq, void *dev_id, struct pt_regs 
     press_cnt++;
     return (irq_handler_t) IRQ_HANDLED;
 }
+*/
 
 module_init(bulbctrl_init);
 module_exit(bulbctrl_exit);

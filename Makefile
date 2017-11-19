@@ -1,5 +1,5 @@
 UDEVFILE=bulbctrl.rules
-BUILDCFLAGS=-Wall -Wextra -Wpedantic
+BUILDCFLAGS=-Wall -Wextra -Wpedantic --std=c11
 
 obj-m+=bulbctrl.o
 
